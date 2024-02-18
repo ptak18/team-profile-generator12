@@ -9,6 +9,7 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./src/page-template.js");
+const employeesArr = [];
 
 const mainQuestions = [
   {
@@ -33,36 +34,54 @@ const mainQuestions = [
   },
 ];
 
+const engineerQuestions = [
+  {
+    type: "input",
+    name: "engineerName",
+    message: "Please type in the engineer's name",
+  },
+];
+
+const addEngineer = () => {
+  inquirer.prompt(engineerQuestions).then((engineerAnswers) => {
+    const engineer = new Engineer(engineerAnswers.engineerName);
+
+    employeesArr.push(engineer);
+    addNewEmployee();
+  });
+};
+
 const addNewEmployee = () => {
+  // prompt the user to add choose which type of employee
+  // ask the questions for that specific type of employee
   inquirer
     .prompt([
       {
-        type: "confirm",
-        name: "addNewEmployee",
-        message: "Do you want to add another employee?",
+        type: "list",
+        name: "employeeType",
+        message: "What type of employee would you like to add",
+        choices: [
+          { name: "Engineer", value: "engineer" },
+          { name: "Intern", value: "intern" },
+          { name: "I don't want to add another employee", value: false },
+        ],
       },
     ])
-    .then((addNewEmployeeAnswers) => {
-      if (addNewEmployeeAnswers.addNewEmployee) {
-        // prompt the user to add choose which type of employee
-        // ask the questions for that specific type of employee
-        inquirer
-          .prompt([
-            {
-              type: "list",
-              name: "employeeType",
-              message: "What type of employee would you like to add",
-              choices: [
-                { name: "Engineer", value: "engineer" },
-                { name: "Intern", value: "intern" },
-              ],
-            },
-          ])
-          .then((employeeTypeAnswers) => {
-            console.log(employeeTypeAnswers);
-          });
-      } else {
-        // generate file
+    .then((addEmployeeAnswers) => {
+      console.log(addEmployeeAnswers);
+      switch (addEmployeeAnswers.employeeType) {
+        case "engineer":
+          // add new engineer
+          console.log("engineer");
+          addEngineer();
+          break;
+        case "intern":
+          // add new intern
+          console.log("intern");
+          break;
+        default:
+          // build the team profile
+          break;
       }
     });
 };
